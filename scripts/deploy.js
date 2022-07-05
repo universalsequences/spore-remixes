@@ -29,6 +29,7 @@ async function main() {
 ];
 
   const SporesMinter = await ethers.getContractFactory("SporesMinter");
+  const SporePlayerMinter = await ethers.getContractFactory("SporePlayerMinter");
 
   const DEPLOYED_ADDRESS = "0x8cf6d785615b472467339e66A4f41c356EbA2558";
 
@@ -37,6 +38,35 @@ async function main() {
   const ZORA_ASKS_ADDRESS = '0xA98D3729265C88c5b3f861a0c501622750fF4806';
   const SPORES_DAO_ADDRESS = '0xdc94060e37dcb8816188508536595019c8F0C98a';
 
+    let ADDY = undefined;
+    let sporePlayerMinter = null;
+    if (ADDY !== undefined) {
+      console.log('attaching');
+      sporePlayerMinter = await SporePlayerMinter.attach(ADDY);
+      console.log("Minter attached to:", sporePlayerMinter.address);
+    } else {
+      console.log("deploying");
+      sporePlayerMinter = await SporePlayerMinter.deploy("https://zequencer.io/ipfs/playerCIDD/");
+      await sporePlayerMinter.deployed();
+      console.log("Minter deployed to:", sporePlayerMinter.address);
+    }
+
+
+  if (!ADDY) {
+    return;
+  }
+  const tx = await sporePlayerMinter.mint(
+    "a",
+    "b",
+    "c",
+    "d"
+  );
+
+  await tx.wait();
+  console.log("mint complete");
+
+  console.log("TokenURI=", await sporePlayerMinter.tokenURI("0x9efe0C372310E179104AA5F478e20355a2538e43", 12));
+/*
   let sporesMinter;
   if (DEPLOYED_ADDRESS) {
     sporesMinter = await SporesMinter.attach(DEPLOYED_ADDRESS);
@@ -65,6 +95,7 @@ async function main() {
 
     await tx.wait();
     console.log("SUCCESSFULLY MINTED");
+    */
 
 }
 
